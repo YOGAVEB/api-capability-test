@@ -5,13 +5,20 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import com.example.service.a.dto.LoginResponse;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import com.example.service.b.entity.UserEntity;
+import com.example.service.b.repository.UserRepository;
 
 @Service
 public class MessageConsumer {
     private final RabbitTemplate rabbitTemplate;
+    private final UserRepository userRepository;
 
-    public MessageConsumer(RabbitTemplate rabbitTemplate) {
+    public MessageConsumer(
+            RabbitTemplate rabbitTemplate,
+            UserRepository userRepository
+    ) {
         this.rabbitTemplate = rabbitTemplate;
+        this.userRepository = userRepository;
     }
 
     @RabbitListener(queues = "login.queue")
@@ -21,10 +28,16 @@ public class MessageConsumer {
         System.out.println("Username: " + request.getUsername());
         System.out.println("Password: " + request.getPassword());
 
+        UserEntity user = userRepository.findByUsername(
+                request.getUsername()
+        );
+
         LoginResponse response;
 
-        if ("admin".equals(request.getUsername())
-                && "123".equals(request.getPassword())) {
+        if (user != null &&
+                user.getPassword().equals(
+                        request.getPassword()
+                )) {
 
             System.out.println("LOGIN SUCCESS");
 
