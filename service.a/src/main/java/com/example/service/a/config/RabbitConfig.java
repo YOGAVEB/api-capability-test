@@ -33,4 +33,13 @@ public class RabbitConfig {
 
         return converter;
     }
+    @Bean
+    public Queue profileQueue() {
+        return new Queue("profile.queue");
+    }
+
+    @Bean
+    public Queue profileReplyQueue() {
+        return new Queue("profile.reply.queue");
+    }
 }

@@ -4,6 +4,8 @@ import com.example.service.a.dto.LoginRequest;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import com.example.service.a.dto.LoginResponse;
+import com.example.service.a.dto.ProfileRequest;
+import com.example.service.a.dto.ProfileResponse;
 
 @Service
 public class MessageProducer {
@@ -31,5 +33,25 @@ public class MessageProducer {
         );
 
         return (LoginResponse) response;
+    }
+    public ProfileResponse getProfile(
+            String token
+    ) {
+
+        ProfileRequest request =
+                new ProfileRequest(token);
+
+        rabbitTemplate.convertAndSend(
+                "profile.queue",
+                request
+        );
+
+        Object response =
+                rabbitTemplate.receiveAndConvert(
+                        "profile.reply.queue",
+                        5000
+                );
+
+        return (ProfileResponse) response;
     }
 }

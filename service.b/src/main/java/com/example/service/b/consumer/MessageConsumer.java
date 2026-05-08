@@ -8,6 +8,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import com.example.service.b.entity.UserEntity;
 import com.example.service.b.repository.UserRepository;
 import com.example.service.b.service.TokenService;
+import com.example.service.a.dto.ProfileRequest;
+import com.example.service.a.dto.ProfileResponse;
 
 @Service
 public class MessageConsumer {
@@ -66,6 +68,45 @@ public class MessageConsumer {
 
         rabbitTemplate.convertAndSend(
                 "login.reply.queue",
+                response
+        );
+    }
+    @RabbitListener(queues = "profile.queue")
+    public void receiveProfile(
+            ProfileRequest request
+    ) {
+
+        boolean valid =
+                tokenService.isValid(
+                        request.getToken()
+                );
+
+        ProfileResponse response;
+
+        if (valid) {
+
+            String username =
+                    tokenService.getUsername(
+                            request.getToken()
+                    );
+
+            response = new ProfileResponse(
+                    true,
+                    username,
+                    "Profile success"
+            );
+
+        } else {
+
+            response = new ProfileResponse(
+                    false,
+                    null,
+                    "Invalid token"
+            );
+        }
+
+        rabbitTemplate.convertAndSend(
+                "profile.reply.queue",
                 response
         );
     }

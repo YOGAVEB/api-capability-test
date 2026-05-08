@@ -27,4 +27,13 @@ public class RabbitConfig {
     public Queue loginReplyQueue() {
         return new Queue("login.reply.queue");
     }
+    @Bean
+    public Queue profileQueue() {
+        return new Queue("profile.queue");
+    }
+
+    @Bean
+    public Queue profileReplyQueue() {
+        return new Queue("profile.reply.queue");
+    }
 }
