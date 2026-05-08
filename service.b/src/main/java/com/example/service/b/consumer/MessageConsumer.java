@@ -7,18 +7,22 @@ import com.example.service.a.dto.LoginResponse;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import com.example.service.b.entity.UserEntity;
 import com.example.service.b.repository.UserRepository;
+import com.example.service.b.service.TokenService;
 
 @Service
 public class MessageConsumer {
     private final RabbitTemplate rabbitTemplate;
     private final UserRepository userRepository;
+    private final TokenService tokenService;
 
     public MessageConsumer(
             RabbitTemplate rabbitTemplate,
-            UserRepository userRepository
+            UserRepository userRepository,
+            TokenService tokenService
     ) {
         this.rabbitTemplate = rabbitTemplate;
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
     }
 
     @RabbitListener(queues = "login.queue")
@@ -44,7 +48,9 @@ public class MessageConsumer {
             response = new LoginResponse(
                     true,
                     "Login success",
-                    "abc123token"
+                    tokenService.generateToken(
+                            user.getUsername()
+                    )
             );
 
         } else {
