@@ -3,6 +3,7 @@ package com.example.service.a.controller;
 import com.example.service.a.dto.LoginRequest;
 import com.example.service.a.producer.MessageProducer;
 import org.springframework.web.bind.annotation.*;
+import com.example.service.a.dto.LoginResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -15,10 +16,10 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public LoginResponse login(
+            @RequestBody LoginRequest request
+    ) {
 
-        producer.sendLogin(request);
-
-        return "Login request sent!";
+        return producer.sendLogin(request);
     }
 }

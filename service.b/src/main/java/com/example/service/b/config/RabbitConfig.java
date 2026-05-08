@@ -1,5 +1,6 @@
 package com.example.service.b.config;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,5 +17,14 @@ public class RabbitConfig {
         );
 
         return converter;
+    }
+    @Bean
+    public Queue loginQueue() {
+        return new Queue("login.queue");
+    }
+
+    @Bean
+    public Queue loginReplyQueue() {
+        return new Queue("login.reply.queue");
     }
 }

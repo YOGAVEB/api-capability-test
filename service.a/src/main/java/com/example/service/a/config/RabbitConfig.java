@@ -3,6 +3,7 @@ package com.example.service.a.config;
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.amqp.support.converter.SimpleMessageConverter;
 
 @Configuration
 public class RabbitConfig {
@@ -15,5 +16,21 @@ public class RabbitConfig {
     @Bean
     public Queue loginQueue() {
         return new Queue("login.queue");
+    }
+    @Bean
+    public Queue loginReplyQueue() {
+        return new Queue("login.reply.queue");
+    }
+    @Bean
+    public SimpleMessageConverter messageConverter() {
+
+        SimpleMessageConverter converter =
+                new SimpleMessageConverter();
+
+        converter.setAllowedListPatterns(
+                java.util.List.of("*")
+        );
+
+        return converter;
     }
 }
